@@ -298,6 +298,47 @@
           );
         }
       }
+
+      Blockly.Search = {};
+
+      Blockly.Search.isMatch = function(block, searchTerms) {
+        var blockText = block.type;
+        for (var i = 0, input; input = block.inputList[i]; i++) {
+          if (typeof input.name != 'undefined') {
+            blockText += ' ' + input.name.toLowerCase();
+          }
+
+          for (var j = 0, field; field = input.fieldRow[j]; j++) {
+            if (typeof field.name != 'undefined') {
+              blockText += ' ' + field.name.toLowerCase();
+            }
+          blockText += ' ' + field.getText().toLowerCase();
+          }
+        }
+
+        for (var i = 0; i < searchTerms.length; i++) {
+          if (blockText.includes(searchTerms[i])) {
+            return true;
+          }
+        }
+        return false;
+      };
+
+      Blockly.Search.getMatchingBlocks = function(query) {
+        var search_terms = query.trim().toLowerCase().split(' ');
+        var allBlocks = Blockly.mainWorkspace.getFlyout().getWorkspace().getTopBlocks();
+        var matchingBlocks = []
+        if (search_terms.length) {
+          for (var i = 0; i < allBlocks.length; i++) {
+            if (Blockly.Search.isMatch(allBlocks[i], search_terms)) {
+              var xml = Blockly.Xml.blockToDom(allBlocks[i]);
+              console.log('MATCHING:' + allBlocks[i].id);
+              matchingBlocks.push(xml);
+              Blockly.Xml.appendDomToWorkspace(xml, Blockly.mainWorkspace);
+            }
+          }
+        }
+      };
     </script>
 
     <style>
