@@ -333,12 +333,30 @@
             if (Blockly.Search.isMatch(allBlocks[i], search_terms)) {
               var xml = Blockly.Xml.blockToDom(allBlocks[i]);
               console.log('MATCHING:' + allBlocks[i].id);
+              // matchingBlocks.push(allBlocks[i].id);
               matchingBlocks.push(xml);
-              Blockly.Xml.appendDomToWorkspace(xml, Blockly.mainWorkspace);
+              // Blockly.Xml.appendDomToWorkspace(xml, Blockly.mainWorkspace);
             }
           }
         }
+        return matchingBlocks;
       };
+
+      function searchBlocks() {
+        var query = document.getElementById("blockSearchInput").value;
+        var matchingBlocksList = Blockly.Search.getMatchingBlocks(query);
+        Blockly.mainWorkspace.clear();
+        if (matchingBlocksList.length) {
+          var parentXml = document.createElement('xml');
+          for (var i = 0; i < matchingBlocksList.length; i++) {
+            parentXml.append(matchingBlocksList[i]);
+          }
+          Blockly.Xml.domToWorkspace(parentXml, Blockly.mainWorkspace);
+          Blockly.mainWorkspace.cleanUp();
+        } else {
+          console.log('No matches found!');
+        }
+      }
     </script>
 
     <style>
@@ -385,6 +403,7 @@
 
   <body onload="start()">
     <div id="collaborators"></div>
+    <input type="text" id="blockSearchInput" placeholder="Search blocks" onchange="searchBlocks()">
     <div id="blocklyDiv"></div>
     <!-- Simple toolbox -->
     <xml id="toolbox-simple" style="display: none">
