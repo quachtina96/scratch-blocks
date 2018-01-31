@@ -344,17 +344,21 @@
 
       function searchBlocks() {
         var query = document.getElementById("blockSearchInput").value;
-        var matchingBlocksList = Blockly.Search.getMatchingBlocks(query);
-        Blockly.mainWorkspace.clear();
-        if (matchingBlocksList.length) {
-          var parentXml = document.createElement('xml');
-          for (var i = 0; i < matchingBlocksList.length; i++) {
-            parentXml.append(matchingBlocksList[i]);
+        if (query) {
+          var matchingBlocksList = Blockly.Search.getMatchingBlocks(query);
+          Blockly.mainWorkspace.clear();
+          if (matchingBlocksList.length) {
+            var parentXml = document.createElement('xml');
+            for (var i = 0; i < matchingBlocksList.length; i++) {
+              parentXml.append(matchingBlocksList[i]);
+            }
+            Blockly.Xml.domToWorkspace(parentXml, Blockly.mainWorkspace);
+            Blockly.mainWorkspace.cleanUp();
+          } else {
+            console.log('No matches found!');
           }
-          Blockly.Xml.domToWorkspace(parentXml, Blockly.mainWorkspace);
-          Blockly.mainWorkspace.cleanUp();
         } else {
-          console.log('No matches found!');
+          Blockly.mainWorkspace.clear();
         }
       }
     </script>
@@ -403,7 +407,7 @@
 
   <body onload="start()">
     <div id="collaborators"></div>
-    <input type="text" id="blockSearchInput" placeholder="Search blocks" onchange="searchBlocks()">
+    <input type="text" id="blockSearchInput" placeholder="Search blocks" onkeyup="searchBlocks()">
     <div id="blocklyDiv"></div>
     <!-- Simple toolbox -->
     <xml id="toolbox-simple" style="display: none">
